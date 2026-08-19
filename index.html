@@ -223,6 +223,35 @@ tr:hover{background:#FAFBFF}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(26,86,219,.3);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ===== COWORKERS ===== */
+.cw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.cw-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);position:relative;transition:box-shadow .15s}
+.cw-card.me{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.12),var(--shadow-lg)}
+.cw-me-badge{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
+.cw-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.cw-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;box-shadow:0 2px 8px rgba(26,86,219,.3)}
+.cw-av.me{background:linear-gradient(135deg,#047857,#10B981);box-shadow:0 2px 8px rgba(5,150,105,.3)}
+.cw-info{flex:1;min-width:0}
+.cw-id{font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.5px;font-family:monospace}
+.cw-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.cw-shift-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.cw-shift{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px}
+.cw-shift.day{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-bd)}
+.cw-shift.night{background:#EDE9FE;color:#6D28D9;border:1px solid #DDD6FE}
+.cw-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px}
+.cw-stat{background:var(--blue-light);border:1px solid var(--blue-soft);border-radius:9px;padding:8px 4px;text-align:center}
+.cw-stat .v{font-size:20px;font-weight:800;color:var(--blue)}
+.cw-stat .l{font-size:9px;color:var(--muted);margin-top:1px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.cw-zones{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.cw-zone-tag{font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;background:var(--blue-light);color:var(--blue-dark);border:1px solid var(--blue-soft)}
+.cw-machines{font-size:11px;color:var(--muted);margin-top:5px;font-weight:600;line-height:1.5}
+.cw-empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.cw-empty-icon{font-size:48px;margin-bottom:10px}
+.cw-refresh-btn{background:none;border:1.5px solid var(--blue-soft);border-radius:8px;cursor:pointer;font-size:14px;padding:6px 10px;color:var(--blue);font-weight:700;transition:background .15s}
+.cw-refresh-btn:hover{background:var(--blue-light)}
+.cw-divider{font-size:12px;font-weight:800;color:var(--muted);margin:12px 2px 6px;display:flex;align-items:center;gap:6px}
+.cw-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
 /* ===== DESKTOP ===== */
 @media(min-width:768px){
   main{padding:16px 20px 100px}
@@ -365,6 +394,7 @@ tr:hover{background:#FAFBFF}
       </span>
       <span class="badge" id="connBadge"><span class="dot"></span><span id="connText">เชื่อมต่อ…</span></span>
       <button class="hdr-icon-btn" onclick="reload()" title="โหลดข้อมูลใหม่">🔄</button>
+      <button class="hdr-icon-btn" onclick="setPane('coworkers')" title="เพื่อนร่วมกะ">👥</button>
       <button class="hdr-icon-btn" onclick="setPane('settings')" title="ตั้งค่า">⚙️</button>
     </div>
   </div>
@@ -676,6 +706,32 @@ tr:hover{background:#FAFBFF}
 
 </section>
 
+<!-- ============== TAB: เพื่อนร่วมกะ (COWORKERS) ============== -->
+<section id="pane-coworkers" class="pane">
+  <div class="row" style="justify-content:space-between;align-items:center;margin:6px 4px 12px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:18px;font-weight:800;color:var(--blue-dark);display:flex;align-items:center;gap:8px">
+      <span style="font-size:22px">👥</span> เพื่อนร่วมกะ
+    </div>
+    <button class="cw-refresh-btn" onclick="renderCoworkers()">🔄 รีเฟรช</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="card" style="padding:10px;margin-bottom:12px">
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <button class="btn btn-blue btn-sm cw-shift-tab active" data-cwshift="all"   onclick="setCwShift('all')">🔄 รวมทุกกะ</button>
+      <button class="btn btn-outline btn-sm cw-shift-tab"     data-cwshift="day"   onclick="setCwShift('day')">☀️ กะกลางวัน</button>
+      <button class="btn btn-outline btn-sm cw-shift-tab"     data-cwshift="night" onclick="setCwShift('night')">🌙 กะกลางคืน</button>
+    </div>
+    <div class="fr" style="margin:0">
+      <label>วันที่</label>
+      <input type="date" id="cwDate" onchange="renderCoworkers()">
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div id="cwCards" class="cw-grid"></div>
+</section>
+
 </main>
 
 <!-- ============== BOTTOM NAV (5 tabs — FAB บันทึก ตรงกลาง, วางแผน ขวาสุด) ============== -->
@@ -976,12 +1032,13 @@ function setPane(name) {
   $('pane-' + name).classList.add('active');
   $$('nav.bnav button').forEach(b => b.classList.toggle('active', b.dataset.pane === name));
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (name === 'home')     renderHome();
-  if (name === 'kpi')      renderZone();
-  if (name === 'prod')     renderHome();
-  if (name === 'history')  loadHistory();
-  if (name === 'plan')     pullPlans();
-  if (name === 'settings') renderSettings();
+  if (name === 'home')       renderHome();
+  if (name === 'kpi')        renderZone();
+  if (name === 'prod')       renderHome();
+  if (name === 'history')    loadHistory();
+  if (name === 'plan')       pullPlans();
+  if (name === 'settings')   renderSettings();
+  if (name === 'coworkers')  renderCoworkers();
 }
 
 function setZone(z) {
@@ -3774,6 +3831,181 @@ async function delMachine(zone, id) {
   renderMachineList(); renderZone();
   toast('ลบแล้ว', 'green');
   if (API) { try { await api('/api/machines/delete', { body: { zone, id } }); } catch (e) {} }
+}
+
+/* ============================================================
+   COWORKERS — เพื่อนร่วมกะ
+   แสดงข้อมูลเพื่อนร่วมงานที่บันทึก KPI ในวันเดียวกัน
+   ============================================================ */
+let _cwShift = 'all';
+
+function setCwShift(s) {
+  _cwShift = s;
+  document.querySelectorAll('.cw-shift-tab').forEach(b => {
+    const active = b.dataset.cwshift === s;
+    b.className = active
+      ? 'btn btn-blue btn-sm cw-shift-tab active'
+      : 'btn btn-outline btn-sm cw-shift-tab';
+  });
+  renderCoworkers();
+}
+
+async function renderCoworkers() {
+  const el = $('cwCards');
+  if (!el) return;
+
+  // ตั้งค่า default วันที่เป็นวันนี้
+  const cwDateEl = $('cwDate');
+  if (cwDateEl && !cwDateEl.value) cwDateEl.value = todayISO();
+  const date = (cwDateEl?.value) || todayISO();
+
+  el.innerHTML = `<div class="cw-empty"><div class="cw-empty-icon">⏳</div><div>กำลังโหลดข้อมูล...</div></div>`;
+
+  // โหลด KPI records จาก API หรือ local cache
+  let records = state.kpiRecords.filter(r =>
+    (r.shift_date || r.record_date || '').slice(0, 10) === date
+  );
+
+  if (API) {
+    try {
+      const params = new URLSearchParams({ from: date, to: date });
+      const res = await api('/api/kpi?' + params).catch(() => null);
+      if (res?.records?.length) records = res.records;
+    } catch (e) {}
+  }
+
+  // กรองตาม shift filter
+  if (_cwShift !== 'all') {
+    records = records.filter(r => r.shift_type === _cwShift);
+  }
+
+  if (!records.length) {
+    const shiftLbl = _cwShift === 'day' ? 'กะกลางวัน' : _cwShift === 'night' ? 'กะกลางคืน' : '';
+    el.innerHTML = `<div class="cw-empty">
+      <div class="cw-empty-icon">👥</div>
+      <div style="font-weight:700;color:var(--text)">ยังไม่มีข้อมูล</div>
+      <div class="muted mt-8" style="font-size:12px">ไม่พบการบันทึก KPI วันที่ ${date}${shiftLbl ? ' ' + shiftLbl : ''}</div>
+    </div>`;
+    return;
+  }
+
+  // จัดกลุ่มตาม operator
+  const byOp = {};
+  records.forEach(r => {
+    const key = r.operator || '(ไม่ระบุ)';
+    if (!byOp[key]) {
+      byOp[key] = {
+        operator: key,
+        records: [],
+        zones: new Set(),
+        machines: new Set(),
+        totalOpr: 0,
+        shifts: new Set(),
+        lastTime: '',
+      };
+    }
+    const entry = byOp[key];
+    entry.records.push(r);
+    if (r.zone) entry.zones.add(r.zone);
+    if (r.machine_id) entry.machines.add(r.machine_id);
+    entry.totalOpr += (r.opr || 0);
+    if (r.shift_type) entry.shifts.add(r.shift_type);
+    const t = r.created_at || r.shift_date || r.record_date || '';
+    if (t > entry.lastTime) entry.lastTime = t;
+  });
+
+  // แยก operator string "ID — ชื่อ" → { id, name }
+  function parseOperator(op) {
+    const sep = op.indexOf(' — ');
+    if (sep >= 0) return { id: op.slice(0, sep).trim(), name: op.slice(sep + 3).trim() };
+    return { id: op.trim(), name: op.trim() };
+  }
+
+  // ชื่อ Zone แบบสั้น
+  const ZONE_SHORT = { ZONE1: 'AFTERMARKET', ZONE2: 'INDUCTION', ZONE3: 'FORD6&PERKINS' };
+  const SHIFT_LABEL = { day: { text: '☀️ กลางวัน', cls: 'day' }, night: { text: '🌙 กลางคืน', cls: 'night' } };
+
+  // User ปัจจุบัน (ใช้เทียบ "me")
+  const myOp = CURRENT_USER ? `${CURRENT_USER.id} — ${CURRENT_USER.name || ''}` : null;
+
+  // เรียงลำดับ: user ปัจจุบันขึ้นก่อน → OPR มากลงมา
+  const sorted = Object.values(byOp).sort((a, b) => {
+    if (myOp) {
+      if (a.operator === myOp) return -1;
+      if (b.operator === myOp) return 1;
+    }
+    return b.totalOpr - a.totalOpr;
+  });
+
+  // แยก "ฉัน" กับ "คนอื่น"
+  const meEntry  = myOp ? sorted.find(e => e.operator === myOp) : null;
+  const others   = myOp ? sorted.filter(e => e.operator !== myOp) : sorted;
+
+  function renderCard(entry) {
+    const isMe = myOp && entry.operator === myOp;
+    const { id, name } = parseOperator(entry.operator);
+    const initial = (id || name || '?').charAt(0).toUpperCase();
+    const shifts   = [...entry.shifts];
+    const zones    = [...entry.zones].filter(Boolean);
+    const machines = [...entry.machines].filter(Boolean);
+
+    return `
+      <div class="cw-card${isMe ? ' me' : ''}">
+        ${isMe ? '<div class="cw-me-badge">👤 คุณ</div>' : ''}
+        <div class="cw-top">
+          <div class="cw-av${isMe ? ' me' : ''}">${escapeHtml(initial)}</div>
+          <div class="cw-info">
+            <div class="cw-id">${escapeHtml(id)}</div>
+            <div class="cw-name">${escapeHtml(name)}</div>
+            <div class="cw-shift-row">
+              ${shifts.map(s => {
+                const info = SHIFT_LABEL[s] || { text: s, cls: '' };
+                return `<span class="cw-shift ${info.cls}">${info.text}</span>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="cw-stats">
+          <div class="cw-stat">
+            <div class="v">${entry.totalOpr.toLocaleString()}</div>
+            <div class="l">OPR รวม</div>
+          </div>
+          <div class="cw-stat">
+            <div class="v">${entry.records.length}</div>
+            <div class="l">บันทึก</div>
+          </div>
+          <div class="cw-stat">
+            <div class="v">${machines.length}</div>
+            <div class="l">เครื่องจักร</div>
+          </div>
+        </div>
+        ${zones.length ? `<div class="cw-zones">
+          ${zones.map(z => `<span class="cw-zone-tag">${escapeHtml(ZONE_SHORT[z] || z)}</span>`).join('')}
+        </div>` : ''}
+        ${machines.length ? `<div class="cw-machines">🔧 ${machines.map(m => escapeHtml(m)).join(' · ')}</div>` : ''}
+      </div>`;
+  }
+
+  let html = '';
+
+  // การ์ด "คุณ" อยู่ด้านบนสุด
+  if (meEntry) {
+    html += `<div class="cw-divider" style="grid-column:1/-1">ข้อมูลของคุณ</div>`;
+    html += renderCard(meEntry);
+  }
+
+  // เพื่อนร่วมกะคนอื่น
+  if (others.length) {
+    html += `<div class="cw-divider" style="grid-column:1/-1">เพื่อนร่วมกะ (${others.length} คน)</div>`;
+    html += others.map(renderCard).join('');
+  }
+
+  // ถ้าไม่มี CURRENT_USER ให้แสดงทั้งหมดโดยไม่แบ่ง
+  if (!meEntry && !others.length) {
+    html = sorted.map(renderCard).join('');
+  }
+
+  el.innerHTML = html;
 }
 
 /* ============================================================
